@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="../assets/icon/favicon2.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Swift | Dashboards</title>
+
+    <link rel="stylesheet" href="./Css/style.css">
+    <link rel="stylesheet" href="./Css/dashboards.css">
+    <!-- <script src="../js/funcoes.js"></script>
+    <script src="./alerta.js"></script> -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- scripts do Chart.js - 2022-1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--FONT AWESOME-->
+    <script src="https://kit.fontawesome.com/9f7414eb10.js" crossorigin="anonymous"></script>
+</head>
+
+<!-- <body onload=" atualizarFeed()"> -->
+
+<body onload="updateFeed()">
+
+    <div class="janela">
+        <div class="header-left">
+            <h1>Taylor Swift</h1>
+
+            <div class="hello">
+                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
+            </div>
+
+
+            <div class="btn-nav">
+
+                <h3>Gráficos</h3>
+
+            </div>
+
+            <div class="btn-nav-white">
+                <a href="./mural.html">
+                    <h3>Mural de Avisos</h3>
+                </a>
+            </div>
+
+            <div class="btn-logout" <a href="home.html">
+                <a href="./home.html"></a>
+                <h3>Sair</h3>
+            </div>
+
+        </div>
+
+
+
+        <div class="chart1">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('myChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Speak Now', 'Fearless', 'Red', '1989', 'Reputation', 'Lover', 'Folklore', 'Evermore', 'Midnights'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderWidth: 1
+
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+        </script>
+        <div class="card">
+            <p class="Frasepontos" id="pontuacao"></p>
+
+        </div>
+    </div>
+
+
+
+</body>
+<script>
+    b_usuario.innerHTML = `${sessionStorage.NOME_USUARIO}`
+    function updateFeed() {
+        var user = sessionStorage.ID_USUARIO;
+        console.log(user);
+        fetch("/usuarios/valor", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userServer: user
+            })
+        })
+            .then(function (resposta) {
+                if (resposta.ok) {
+                    if (resposta.status == 204) {
+                        var feed = document.getElementById("feed_container");
+                        var mensagem = document.createElement("span");
+                        mensagem.innerHTML = "Nenhum resultado encontrado."
+                        feed.appendChild(mensagem);
+                        throw "Nenhum resultado encontrado!!";
+                    }
+
+                    resposta.json().then(function (resposta) {
+                        console.log("Dados recebidos: ", JSON.stringify(resposta[0]["pontuacao"]));
+                        pontuacao.innerHTML = 'você tem ' + resposta[0] ["pontuacao"] +  ' pontos'
+                    });
+                } else {
+                    throw ('Houve um erro na API!');
+                }
+            }).catch(function (resposta) {
+                console.error(resposta);
+            });
+    }
+</script>
